@@ -20,7 +20,7 @@ float val;
 int val_success;
 bool restart = false;
 
-unsigned int telegram_status_cycle = 30 * 60 * 1000;
+unsigned int telegram_status_cycle = 15 * 60 * 1000;
 unsigned int telegram_tick_cycle = 2000;
 unsigned int telegram_restart_cycle = 46 * 60 * 60 * 1000;
 unsigned long telegram_restart_timestamp;
@@ -181,7 +181,8 @@ void updateStatusMsg()
 {
     status = "__Current Status__\nTemperature: *" + String(bme280_meas[0]) + " C*\nHumidity: *" + String(bme280_meas[1]) + " %*\nSoil moisture: *" +
              String(soil_meas) + " units*\nWater Detection: *" + String(water_meas) + " units*\nExhaust Fan: *" + String(target_pwm_exhaust * 100) +
-             " %*\nCirculation Fan: *" + String(target_pwm_circ * 100) + " %*\nCycle Duration \\(Day \\| Night \\| Total\\): *" + String(cycle_on) + " \\| " + String(cycle_off) + " \\| " + String(cycle_total) + " hours*";
+             " %*\nCirculation Fan: *" + String(target_pwm_circ * 100) + " %*\nCycle Duration \\(Day \\| Night \\| Total\\): *" + String(cycle_on) + 
+             " \\| " + String(cycle_off) + " \\| " + String(cycle_total) + " hours*\nLight Status: *" + light_status_str + "*";
 }
 
 void updateStatus()
@@ -295,7 +296,7 @@ void newMsg(FB_msg &msg)
             restart = true;
         }
 
-        else if (msg.text == "/status")
+        else if (msg.text == "/update")
         {
             bot.deleteMessage(msg.ID);
             updateStatus();
@@ -343,7 +344,7 @@ void setupTelegram()
     fan_menu = "Exhaust\tCirculation";
     light_menu = "Day\tNight\tPresets";
     light_presets = "12/12\t16/8\t18/6";
-    welcome_text = "Choose an option above";
+    welcome_text = "Choose an option above or type a commmand.";
     new_value_text = "Send the new value now \\(cannot be 0\\)";
 
     telegram_restart_timestamp = millis();
