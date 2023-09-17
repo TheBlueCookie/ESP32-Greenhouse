@@ -18,7 +18,7 @@ void setup()
   setupSensors();
   setupFans();
   setupLight();
-  setupTelegram(); //always setup last
+  setupTelegram(); // always setup last
 }
 
 void loop()
@@ -30,6 +30,8 @@ void loop()
     if (first_loop)
     {
       measureBME280();
+      prepareSoilMeas();
+      prepareWaterMeas();
       updateStatus();
       first_loop = false;
     }
@@ -39,11 +41,34 @@ void loop()
       measureBME280();
     }
 
+    if (soil_prep && (millis() - soil_prep_timestamp) >= soil_water_prep)
+    {
+      measureSoil();
+      updateStatus();
+    }
+
+    if ((millis() - soil_timestamp) >= soil_cycle && !soil_prep)
+    {
+      prepareSoilMeas();
+    }
+
+    if (water_prep && (millis() - water_prep_timestamp) >= soil_water_prep)
+    {
+      measureWater();
+      updateStatus();
+    }
+
+    if ((millis() - water_timestamp) >= water_cycle && !water_prep)
+    {
+      prepareWaterMeas();
+    }
+
     if (light_status == 0)
     {
       if ((millis() - off_timestamp) >= cycle_off_millis)
       {
         lightOn();
+        updateStatus();
       }
     }
 
@@ -52,17 +77,20 @@ void loop()
       if ((millis() - on_timestamp) >= cycle_on_millis)
       {
         lightOff();
+        updateStatus();
       }
     }
 
     if (current_pwm_circ != target_pwm_circ)
     {
       setPWMCirc(target_pwm_circ);
+      updateStatus();
     }
 
     if (current_pwm_exhaust != target_pwm_exhaust)
     {
       setPWMExhaust(target_pwm_exhaust);
+      updateStatus();
     }
 
     if ((millis() - api_timestamp) >= api_cycle)
