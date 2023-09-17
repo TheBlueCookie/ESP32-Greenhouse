@@ -49,11 +49,11 @@ void setupFans()
     ledcSetup(ledChannel_circ, freq, resolution);
     ledcAttachPin(FAN_CIRC_PWM, ledChannel_circ);
 
-    current_pwm_circ = 0.25;
-    current_pwm_exhaust = 0.25;
+    current_pwm_circ = 0.2;
+    current_pwm_exhaust = 0.2;
 
-    target_pwm_circ = 0.25;
-    target_pwm_exhaust = 0.25;
+    target_pwm_circ = current_pwm_circ;
+    target_pwm_exhaust = current_pwm_exhaust;
 
     setPWMExhaust(current_pwm_exhaust);
     setPWMCirc(current_pwm_circ);

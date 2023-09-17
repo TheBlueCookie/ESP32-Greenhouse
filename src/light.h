@@ -6,50 +6,72 @@
 #include <pin_def.h>
 
 int light_status;
+int manual_light_status;
+int next_status;
 String light_status_str;
 
 float cycle_on;
 float cycle_off;
 float cycle_total;
 
-unsigned long on_timestamp;
-unsigned long off_timestamp;
-unsigned long cycle_on_millis;
-unsigned long cycle_off_millis;
+unsigned long lamp_timestamp;
+unsigned int cycle_on_m;
+unsigned int cycle_off_m;
+
+void manualToggle()
+{
+    if (light_status == 0)
+    {
+        digitalWrite(RELAY_LAMP, HIGH);
+        light_status = 1;
+        manual_light_status = 1;
+        light_status_str = "On";
+        ThingSpeak.setField(API_LIGHT_FIELD, 1);
+        Serial.println("Light On");
+    }
+
+    else if (light_status == 1)
+    {
+        digitalWrite(RELAY_LAMP, LOW);
+        light_status = 0;
+        manual_light_status = 0;
+        light_status_str = "Off";
+        ThingSpeak.setField(API_LIGHT_FIELD, 0);
+        Serial.println("Light Off");
+    }
+}
+
+void lightOn()
+{
+    digitalWrite(RELAY_LAMP, HIGH);
+    lamp_timestamp = millis();
+    next_status = 0;
+    light_status = 1;
+    light_status_str = "On";
+    ThingSpeak.setField(API_LIGHT_FIELD, 1);
+    Serial.println("Light On");
+}
+
+void lightOff()
+{
+    digitalWrite(RELAY_LAMP, LOW);
+    lamp_timestamp = millis();
+    next_status = 1;
+    light_status = 0;
+    light_status_str = "Off";
+    ThingSpeak.setField(API_LIGHT_FIELD, 0);
+    Serial.println("Light Off");
+}
 
 void updateCycle(float on, float off)
 {
     cycle_on = on;
     cycle_off = off;
     cycle_total = cycle_on + cycle_off;
-    cycle_on_millis = cycle_on * 3600 * 1000;
-    cycle_off_millis = cycle_off * 3600 * 1000;
-}
 
-void lightOn()
-{
-    if (light_status == 0)
-    {
-        digitalWrite(RELAY_LAMP, HIGH);
-        on_timestamp = millis();
-        light_status = 1;
-        light_status_str = "On";
-        ThingSpeak.setField(API_LIGHT_FIELD, 1);
-        Serial.println("Light On");
-    }
-}
-
-void lightOff()
-{
-    if (light_status == 1)
-    {
-        digitalWrite(RELAY_LAMP, LOW);
-        off_timestamp = millis();
-        light_status = 0;
-        light_status_str = "Off";
-        ThingSpeak.setField(API_LIGHT_FIELD, 0);
-        Serial.println("Light Off");
-    }
+    cycle_on_m = cycle_on * 3600 * 1000;
+    cycle_off_m = cycle_total * 3600 * 1000 - cycle_on_m;
+    lightOn();
 }
 
 void setupLight()
@@ -57,4 +79,5 @@ void setupLight()
     pinMode(RELAY_LAMP, OUTPUT);
     updateCycle(18, 6);
     lightOn();
+    manual_light_status = 1;
 }

@@ -68,7 +68,7 @@ void delUserMsg(int id)
 
 void wrongValue()
 {
-    bot.editMessage(info_id, "Value not in appropriate range! Send new value.");
+    bot.editMessage(info_id, "Value not in appropriate range\\! Send new value.");
     bot.editMenu(menu_id, "Home");
     depth = 99;
 }
@@ -143,7 +143,7 @@ void changeValue(String msg)
                 break;
 
             case 3:
-                if (0 < val && val < 48)
+                if (0 < val && val <= 48)
                 {
                     updateCycle(val, cycle_off);
                     val_success = true;
@@ -151,9 +151,9 @@ void changeValue(String msg)
                 break;
 
             case 4:
-                if (0 < val && val < 48)
+                if (0 < val && val <= 48)
                 {
-                    updateCycle(val, cycle_on);
+                    updateCycle(cycle_on, val);
                     val_success = true;
                 }
                 break;
@@ -235,6 +235,14 @@ void newMsg(FB_msg &msg)
                 changeValuePrompt(2);
             }
 
+            else if (msg.data == "All Off")
+            {
+                target_pwm_circ = 0;
+                target_pwm_exhaust = 0;
+                updateStatus();
+                goMainMenu();
+            }
+
             else if (msg.data == "Day")
             {
                 changeValuePrompt(3);
@@ -249,6 +257,12 @@ void newMsg(FB_msg &msg)
             {
                 depth = 2;
                 bot.editMenu(menu_id, menuText(light_presets));
+            }
+
+            else if(msg.data == "Manual Toggle")
+            {
+                manualToggle();
+                updateStatus();
             }
             break;
 
@@ -302,7 +316,7 @@ void newMsg(FB_msg &msg)
             updateStatus();
         }
 
-        else if (msg.text == BOT_RESTART_KEY)
+        else if (msg.text == BOT_RESTART_KEY || msg.text == "/start")
         {
             bot.deleteMessage(msg.ID);
             restartBot();
@@ -342,7 +356,7 @@ void setupTelegram()
 
     main_menu = "Fan Settings\n Light Settings";
     fan_menu = "Exhaust\tCirculation";
-    light_menu = "Day\tNight\tPresets";
+    light_menu = "Day\tNight\tPresets\nManual Toggle";
     light_presets = "12/12\t16/8\t18/6";
     welcome_text = "Choose an option above or type a commmand.";
     new_value_text = "Send the new value now \\(cannot be 0\\)";

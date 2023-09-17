@@ -63,21 +63,35 @@ void loop()
       prepareWaterMeas();
     }
 
-    if (light_status == 0)
+    if ((millis() - lamp_timestamp) >= cycle_on_m && next_status == 0)
     {
-      if ((millis() - off_timestamp) >= cycle_off_millis)
+      if (manual_light_status == 0)
       {
-        lightOn();
-        updateStatus();
+        lamp_timestamp = millis();
+        next_status = 1;
+        Serial.println(1);
       }
-    }
-
-    else if (light_status == 1)
-    {
-      if ((millis() - on_timestamp) >= cycle_on_millis)
+      if (light_status == 1)
       {
         lightOff();
         updateStatus();
+        Serial.println(2);
+      }
+    }
+
+    if ((millis() - lamp_timestamp) >= cycle_off_m && next_status == 1)
+    {
+      if (manual_light_status == 1)
+      {
+        lamp_timestamp = millis();
+        next_status = 0;
+        Serial.println(3);
+      }
+      if (light_status == 0)
+      {
+        lightOn();
+        updateStatus();
+        Serial.println(4);
       }
     }
 
