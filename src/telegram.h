@@ -316,7 +316,7 @@ void newMsg(FB_msg &msg)
             updateStatus();
         }
 
-        else if (msg.text == BOT_RESTART_KEY || msg.text == "/start")
+        else if (msg.text == BOT_RESTART_KEY)
         {
             bot.deleteMessage(msg.ID);
             restartBot();
@@ -355,7 +355,7 @@ void setupTelegram()
     updateStatusMsg();
 
     main_menu = "Fan Settings\n Light Settings";
-    fan_menu = "Exhaust\tCirculation";
+    fan_menu = "Exhaust\tCirculation\nAll Off";
     light_menu = "Day\tNight\tPresets\nManual Toggle";
     light_presets = "12/12\t16/8\t18/6";
     welcome_text = "Choose an option above or type a commmand.";
