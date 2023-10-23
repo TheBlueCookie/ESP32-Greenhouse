@@ -9,6 +9,8 @@
 #include <credentials.h>
 
 bool first_loop = true;
+int short_recon = 0;
+int long_recon = 0;
 
 void setup()
 {
@@ -23,12 +25,14 @@ void setup()
 
 void loop()
 {
-  if (checkWiFi())
+  if (WiFi.status() == WL_CONNECTED)
   {
     bot.tick();
 
     if (first_loop)
     {
+      delay(api_cycle);
+      getLatestSettings();
       measureBME280();
       prepareSoilMeas();
       prepareWaterMeas();
@@ -109,7 +113,7 @@ void loop()
 
     if ((millis() - api_timestamp) >= api_cycle)
     {
-      ThingSpeak.writeFields(THINGSPEAK_CHANNEL_ID, THINGSPEAK_API_KEY);
+      ThingSpeak.writeFields(THINGSPEAK_CHANNEL_ID, THINGSPEAK_API_KEY_WRITE);
       api_timestamp = millis();
       Serial.println("Uploaded to ThingSpeak.");
     }
@@ -129,5 +133,37 @@ void loop()
       bot.tickManual();
       ESP.restart();
     }
+  }
+
+  else if (short_recon < 12) // try reconnecting every 10 seconds for up to 2 minutes
+  {
+    Serial.println("Attempting to reconnect in short intervals, attempt=" + String(short_recon));
+    WiFi.reconnect();
+    short_recon++;
+    if (WiFi.status() == WL_CONNECTED)
+    {
+      Serial.println("Connection restored.");
+      short_recon = 0;
+    }
+    delay(10 * 1000);
+  }
+
+  else if (long_recon < 10) // try reconnection every 60 seconds for up to 10 minutes
+  {
+    Serial.println("Attempting to reconnect in long intervals, attempt=" + String(long_recon));
+    WiFi.reconnect();
+    long_recon++;
+    if (WiFi.status() == WL_CONNECTED)
+    {
+      Serial.println("Connection restored.");
+      long_recon = 0;
+    }
+    delay(60 * 1000);
+  }
+
+  else
+  {
+    Serial.println("Reconnecting attemps failed. Restarting...");
+    ESP.restart();
   }
 }
