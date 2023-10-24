@@ -5,9 +5,9 @@
 
 #include <pin_def.h>
 
-int light_status;
-int manual_light_status;
-int next_status;
+bool light_status;
+bool manual_light_status;
+bool next_status;
 String light_status_str;
 
 float cycle_on;
