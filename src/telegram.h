@@ -4,6 +4,7 @@
 #include <fan_control.h>
 #include <light.h>
 #include <sensors.h>
+#include <humidifier.h>
 
 int menu_id;
 int info_id;
@@ -33,6 +34,8 @@ String welcome_text;
 String new_value_text;
 String status;
 String light_presets;
+String environment_menu;
+String presets_menu;
 
 void setupTelegram();
 void updateStatus();
@@ -118,7 +121,7 @@ void changeValue(String msg)
         {
             switch (location)
             {
-            case 1:
+            case 1: // change exhaust fan pwm
                 if (0 <= val && val <= 100)
                 {
                     if (val <= 5)
@@ -130,7 +133,7 @@ void changeValue(String msg)
                 }
                 break;
 
-            case 2:
+            case 2: // change circulation fan pwm
                 if (0 <= val && val <= 100)
                 {
                     if (val <= 5)
@@ -142,7 +145,7 @@ void changeValue(String msg)
                 }
                 break;
 
-            case 3:
+            case 3: // change day duration
                 if (0 < val && val <= 48)
                 {
                     updateCycle(val, cycle_off);
@@ -150,13 +153,40 @@ void changeValue(String msg)
                 }
                 break;
 
-            case 4:
+            case 4: // change night duration
                 if (0 < val && val <= 48)
                 {
                     updateCycle(cycle_on, val);
                     val_success = true;
                 }
                 break;
+
+            case 5: // change intake fan pwm
+                if (0 <= val && val <= 100)
+                {
+                    if (val <= 5)
+                    {
+                        val = 0;
+                    }
+                    target_pwm_intake = val * 0.01;
+                    val_success = true;
+                }
+                break;
+
+            case 6: // change target humidity
+                 if (30 <= val && val <= 80)
+                 {
+                    target_humidity = val * 0.01;
+                    val_success = true;
+                 }
+
+            case 7: // change humidifier pulse duration
+                if (10 <= val && val <= 6000)
+                {
+                    changeHumPulseDuration(val);
+                    val_success = true;
+                }
+
 
             default:
                 break;
@@ -179,10 +209,12 @@ void changeValue(String msg)
 
 void updateStatusMsg()
 {
-    status = "__Current Status__\nTemperature: *" + String(bme280_meas[0]) + " C*\nHumidity: *" + String(bme280_meas[1]) + " %*\nSoil moisture: *" +
-             String(soil_meas) + " units*\nWater Detection: *" + String(water_meas) + " units*\nExhaust Fan: *" + String(target_pwm_exhaust * 100) +
+    status = "__Current Status__\nTemperature: *" + String(bme280_meas[0]) + " C*\nHumidity: *" + String(bme280_meas[1]) + " %* \\(Target: " + String(target_humidity * 100) + " %\\)\nSoil moisture: *" +
+             String(soil_meas) + " units*\nWater Detection: *" + String(water_meas) + " units*\nExhaust Fan: *" + String(target_pwm_exhaust * 100) + 
+             " %*\nIntake Fan: *" + String(target_pwm_intake * 100) +
              " %*\nCirculation Fan: *" + String(target_pwm_circ * 100) + " %*\nCycle Duration \\(Day \\| Night \\| Total\\): *" + String(cycle_on) + 
-             " \\| " + String(cycle_off) + " \\| " + String(cycle_total) + " hours*\nLight Status: *" + light_status_str + "*";
+             " \\| " + String(cycle_off) + " \\| " + String(cycle_total) + " hours*\nLight Status: *" + light_status_str + 
+             "*\nHumidifier Status: *" + humidifier_status_str + "*";
 }
 
 void updateStatus()
@@ -211,7 +243,8 @@ void newMsg(FB_msg &msg)
             if (msg.data == "Fan Settings")
             {
                 depth = 1;
-                bot.editMessage(info_id, "__Current settings__\nExhaust Fan:\t*" + String(current_pwm_exhaust * 100) + " %*\nCirculation Fan:\t*" + String(current_pwm_circ * 100) + "%*");
+                bot.editMessage(info_id, "__Current settings__\nExhaust Fan:\t*" + String(current_pwm_exhaust * 100) + " %*\nIntake Fan:\t*" + String(current_pwm_intake * 100) + 
+                " %*\nCirculation Fan:\t*" + String(current_pwm_circ * 100) + "%*");
                 bot.editMenu(menu_id, menuText(fan_menu));
             }
 
@@ -222,12 +255,31 @@ void newMsg(FB_msg &msg)
                                              " hours\nTotal Day/Night Cycle: " + String(cycle_off + cycle_on) + " hours");
                 bot.editMenu(menu_id, menuText(light_menu));
             }
+
+            else if (msg.data == "Environment Settings")
+            {
+                depth = 1;
+                bot.editMessage(info_id, "__Current settings__\nTarget Humidity: *" + String(target_humidity * 100) + " %*\nHumidifier Cycle: *" + hum_pulse_duration + " sec*");
+                bot.editMenu(menu_id, menuText(environment_menu));
+            }
+
+            else if (msg.data == "AIO Presets")
+            {
+                depth = 1;
+                bot.editMessage(info_id, "*This is not implemented yet\\!*");
+                bot.editMenu(menu_id, menuText(presets_menu));
+            }
             break;
 
         case 1:
             if (msg.data == "Exhaust")
             {
                 changeValuePrompt(1);
+            }
+
+            else if (msg.data == "Intake")
+            {
+                changeValuePrompt(5);
             }
 
             else if (msg.data == "Circulation")
@@ -239,6 +291,7 @@ void newMsg(FB_msg &msg)
             {
                 target_pwm_circ = 0;
                 target_pwm_exhaust = 0;
+                target_pwm_intake = 0;
                 updateStatus();
                 goMainMenu();
             }
@@ -263,6 +316,32 @@ void newMsg(FB_msg &msg)
             {
                 manualToggle();
                 updateStatus();
+            }
+
+            else if (msg.data == "Humidity")
+            {
+                changeValuePrompt(6);
+            }
+
+            else if (msg.data == "Toggle Block")
+            {
+                if (!humidifier_manual_block)
+                {
+                    humidifier_manual_block = true;
+                    turnOffHumidifier();
+                    bot.editMessage(info_id, "Blocked Humidifier.");
+                }
+
+                else
+                {
+                    humidifier_manual_block = false;
+                    bot.editMessage(info_id, "Unblocked Humidifier.");
+                }
+            }
+
+            else if (msg.data == "Hum. Cycle")
+            {
+                changeValuePrompt(7);
             }
             break;
 
@@ -354,12 +433,14 @@ void setupTelegram()
 
     updateStatusMsg();
 
-    main_menu = "Fan Settings\n Light Settings";
-    fan_menu = "Exhaust\tCirculation\nAll Off";
+    main_menu = "Fan Settings\nLight Settings\nEnvironment Settings\nAIO Presets";
+    fan_menu = "Exhaust\tIntake\tCirculation\nAll Off";
     light_menu = "Day\tNight\tPresets\nManual Toggle";
+    environment_menu = "Humidity\tHum. Cycle\nToggle Block";
     light_presets = "12/12\t16/8\t18/6";
-    welcome_text = "Choose an option above or type a commmand.";
+    welcome_text = "Choose an option above or type a command.";
     new_value_text = "Send the new value now \\(cannot be 0\\)";
+    presets_menu = "Germination\nVegetation\nFlowering\nDrying";
 
     telegram_restart_timestamp = millis();
 
