@@ -7,6 +7,7 @@
 #include <light.h>
 #include <telegram.h>
 #include <credentials.h>
+#include <humidifier.h>
 
 bool first_loop = true;
 int short_recon = 0;
@@ -20,6 +21,7 @@ void setup()
   setupSensors();
   setupFans();
   setupLight();
+  setupHumidifier();
   setupTelegram(); // always setup last
 }
 
@@ -43,6 +45,7 @@ void loop()
     if ((millis() - bme_timestamp) >= bme280_cycle)
     {
       measureBME280();
+      updateStatus();
     }
 
     if (soil_prep && (millis() - soil_prep_timestamp) >= soil_water_prep)
@@ -108,6 +111,26 @@ void loop()
     if (current_pwm_exhaust != target_pwm_exhaust)
     {
       setPWMExhaust(target_pwm_exhaust);
+      updateStatus();
+    }
+
+    if (current_pwm_intake != target_pwm_intake)
+    {
+      setPWMIntake(target_pwm_intake);
+      updateStatus();
+    }
+
+    if ((millis() - hum_timestamp) >= hum_check_cycle)
+    {
+      hum_timestamp = millis();
+      if (humidifier_status && ((millis() - hum_action_timestamp) >= hum_pulse_duration_millis))
+      {
+        evaluateHumidifierAction();
+      }
+      else if (!humidifier_status)
+      {
+        evaluateHumidifierAction();
+      }
       updateStatus();
     }
 
