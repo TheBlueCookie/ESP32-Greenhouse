@@ -1,15 +1,15 @@
 #pragma once
 
 #define RELAY_LAMP 1
-#define RELAY_2 2
+#define RELAY_HUMIDIFIER 2
 #define RELAY_3 42
 
 #define FAN_EXHAUST_PWM 40
 #define FAN_EXHAUST_TACH 41
 #define FAN_CIRC_PWM 38
 #define FAN_CIRC_TACH 39
-#define FAN_3_PWM 21
-#define FAN_3_TACH 33
+#define FAN_INTAKE_PWM 21
+#define FAN_INTAKE_TACH 33
 #define FAN_4_PWM 19
 
 #define SEN_BME280_SDA 6
