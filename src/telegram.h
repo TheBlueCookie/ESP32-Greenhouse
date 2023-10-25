@@ -35,7 +35,6 @@ String new_value_text;
 String status;
 String light_presets;
 String environment_menu;
-String presets_menu;
 
 void setupTelegram();
 void updateStatus();
@@ -262,13 +261,6 @@ void newMsg(FB_msg &msg)
                 bot.editMessage(info_id, "__Current settings__\nTarget Humidity: *" + String(target_humidity * 100) + " %*\nHumidifier Cycle: *" + hum_pulse_duration + " sec*");
                 bot.editMenu(menu_id, menuText(environment_menu));
             }
-
-            else if (msg.data == "AIO Presets")
-            {
-                depth = 1;
-                bot.editMessage(info_id, "*This is not implemented yet\\!*");
-                bot.editMenu(menu_id, menuText(presets_menu));
-            }
             break;
 
         case 1:
@@ -433,14 +425,13 @@ void setupTelegram()
 
     updateStatusMsg();
 
-    main_menu = "Fan Settings\nLight Settings\nEnvironment Settings\nAIO Presets";
+    main_menu = "Fan Settings\nLight Settings\nEnvironment Settings";
     fan_menu = "Exhaust\tIntake\tCirculation\nAll Off";
     light_menu = "Day\tNight\tPresets\nManual Toggle";
     environment_menu = "Humidity\tHum. Cycle\nToggle Block";
     light_presets = "12/12\t16/8\t18/6";
     welcome_text = "Choose an option above or type a command.";
     new_value_text = "Send the new value now \\(cannot be 0\\)";
-    presets_menu = "Germination\nVegetation\nFlowering\nDrying";
 
     telegram_restart_timestamp = millis();
 
