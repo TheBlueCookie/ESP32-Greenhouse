@@ -4,6 +4,7 @@
 #include <ThingSpeak.h>
 
 #include <pin_def.h>
+#include <restart_manager.h>
 
 bool light_status;
 bool manual_light_status;
@@ -72,6 +73,8 @@ void updateCycle(float on, float off)
     cycle_on_m = cycle_on * 3600 * 1000;
     cycle_off_m = cycle_total * 3600 * 1000 - cycle_on_m;
     lightOn();
+    saveFloatSetting(cycle_on, SETTINGS_DAY);
+    saveFloatSetting(cycle_off, SETTINGS_NIGHT);
 }
 
 void setupLight()

@@ -175,7 +175,7 @@ void changeValue(String msg)
             case 6: // change target humidity
                  if (30 <= val && val <= 80)
                  {
-                    target_humidity = val * 0.01;
+                    changeTargetHumidity(val * 0.01);
                     val_success = true;
                  }
 

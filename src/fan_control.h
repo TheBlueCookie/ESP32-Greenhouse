@@ -27,6 +27,7 @@ void setPWMExhaust(float pwm)
         int cycle = pwm * 255;
         ledcWrite(ledChannel_exhaust, cycle);
         current_pwm_exhaust = pwm;
+        saveFloatSetting(pwm, SETTINGS_EXHAUST);
         ThingSpeak.setField(API_EXHAUST_FIELD, pwm * 100);
         Serial.println("Changed exhaust PWM: " + String(pwm));
     }
@@ -40,6 +41,7 @@ void setPWMCirc(float pwm)
         ledcWrite(ledChannel_circ, cycle);
         current_pwm_circ = pwm;
         ThingSpeak.setField(API_CIRC_FIELD, pwm * 100);
+        saveFloatSetting(pwm, SETTINGS_CIRC);
         Serial.println("Changed circulation PWM: " + String(pwm));
     }
 }
@@ -51,6 +53,7 @@ void setPWMIntake(float pwm)
         int cycle = pwm * 255;
         ledcWrite(ledChannel_intake, cycle);
         current_pwm_intake = pwm;
+        saveFloatSetting(pwm, SETTINGS_INTAKE);
         ThingSpeak.setField(API_INTAKE_FIELD, pwm * 100);
         Serial.println("Changed intake PWM: " + String(pwm));
     }

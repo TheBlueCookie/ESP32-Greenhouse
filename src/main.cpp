@@ -8,6 +8,7 @@
 #include <telegram.h>
 #include <credentials.h>
 #include <humidifier.h>
+#include <restart_manager.h>
 
 bool first_loop = true;
 int short_recon = 0;
@@ -22,6 +23,7 @@ void setup()
   setupFans();
   setupLight();
   setupHumidifier();
+  restoreSettings();
   setupTelegram(); // always setup last
 }
 
@@ -88,6 +90,12 @@ void loop()
 
     if ((millis() - lamp_timestamp) >= cycle_off_m && next_status == 1)
     {
+      if (millis() >= restart_cycle)
+      {
+        delAllBotMsg();
+        bot.deleteMessage(bot.lastUsrMsg());
+        restart = true;
+      }
       if (manual_light_status == 1)
       {
         lamp_timestamp = millis();
