@@ -80,7 +80,6 @@ void updateCycle(float on, float off)
 void setupLight()
 {
     pinMode(RELAY_LAMP, OUTPUT);
-    updateCycle(18, 6);
     lightOn();
     manual_light_status = 1;
 }

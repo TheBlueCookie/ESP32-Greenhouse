@@ -178,6 +178,7 @@ void changeValue(String msg)
                     changeTargetHumidity(val * 0.01);
                     val_success = true;
                  }
+                 break;
 
             case 7: // change humidifier pulse duration
                 if (10 <= val && val <= 6000)
@@ -185,6 +186,7 @@ void changeValue(String msg)
                     changeHumPulseDuration(val);
                     val_success = true;
                 }
+                break;
 
 
             default:

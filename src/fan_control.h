@@ -4,6 +4,7 @@
 #include <ThingSpeak.h>
 
 #include <pin_def.h>
+#include <restart_manager.h>
 
 const int freq = 25000;
 const int resolution = 8;
@@ -70,15 +71,7 @@ void setupFans()
     ledcSetup(ledChannel_intake, freq, resolution);
     ledcAttachPin(FAN_INTAKE_PWM, ledChannel_intake);
 
-    current_pwm_circ = 0.2;
-    current_pwm_exhaust = 0.2;
-    current_pwm_intake = 0.2;
-
-    target_pwm_circ = current_pwm_circ;
-    target_pwm_exhaust = current_pwm_exhaust;
-    target_pwm_intake = current_pwm_intake;
-
-    setPWMExhaust(current_pwm_exhaust);
-    setPWMCirc(current_pwm_circ);
-    setPWMIntake(current_pwm_intake);
+    current_pwm_circ = 0;
+    current_pwm_exhaust = 0;
+    current_pwm_intake = 0;
 }

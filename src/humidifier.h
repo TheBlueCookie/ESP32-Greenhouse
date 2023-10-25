@@ -8,6 +8,7 @@
 #include <credentials.h>
 #include <sensors.h>
 #include <fan_control.h>
+#include <restart_manager.h>
 
 bool humidifier_status;
 bool humidifier_manual_block = false;
@@ -52,7 +53,7 @@ void turnOnHumidifier()
         bme280_cycle_buffer = bme280_cycle;
         bme280_cycle = 2 * 1000;
         intake_pwm_buffer = current_pwm_intake;
-        target_pwm_intake = 0.2;
+        target_pwm_intake = 0.21;
         Serial.println("Humidfier turned on.");
     }
     
@@ -91,7 +92,5 @@ void setupHumidifier()
 {
     pinMode(RELAY_HUMIDIFIER, OUTPUT);
     turnOffHumidifier();
-    changeTargetHumidity(0.5);
-    changeHumPulseDuration(10);
     hum_check_cycle = 5000;
 }
