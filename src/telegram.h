@@ -120,19 +120,19 @@ void changeValue(String msg)
         {
             switch (location)
             {
-            case 1: // change exhaust fan pwm
+            case 1: // change exhaust fan idle pwm
                 if (0 <= val && val <= 100)
                 {
                     if (val <= 5)
                     {
                         val = 0;
                     }
-                    target_pwm_exhaust = val * 0.01;
+                    setIdlePWMExhaust(val * 0.01);
                     val_success = true;
                 }
                 break;
 
-            case 2: // change circulation fan pwm
+            case 2: // directly change circulation fan target pwm
                 if (0 <= val && val <= 100)
                 {
                     if (val <= 5)
@@ -140,6 +140,7 @@ void changeValue(String msg)
                         val = 0;
                     }
                     target_pwm_circ = val * 0.01;
+                    setIdlePWMCirc(val * 0.01);
                     val_success = true;
                 }
                 break;
@@ -160,14 +161,14 @@ void changeValue(String msg)
                 }
                 break;
 
-            case 5: // change intake fan pwm
+            case 5: // change intake fan idle pwm
                 if (0 <= val && val <= 100)
                 {
                     if (val <= 5)
                     {
                         val = 0;
                     }
-                    target_pwm_intake = val * 0.01;
+                    setIdlePWMIntake(val * 0.01);
                     val_success = true;
                 }
                 break;
@@ -211,9 +212,9 @@ void changeValue(String msg)
 void updateStatusMsg()
 {
     status = "__Current Status__\nTemperature: *" + String(bme280_meas[0]) + " C*\nHumidity: *" + String(bme280_meas[1]) + " %* \\(Target: " + String(target_humidity * 100) + " %\\)\nSoil moisture: *" +
-             String(soil_meas) + " units*\nWater Detection: *" + String(water_meas) + " units*\nExhaust Fan: *" + String(target_pwm_exhaust * 100) + 
-             " %*\nIntake Fan: *" + String(target_pwm_intake * 100) +
-             " %*\nCirculation Fan: *" + String(target_pwm_circ * 100) + " %*\nCycle Duration \\(Day \\| Night \\| Total\\): *" + String(cycle_on) + 
+             String(soil_meas) + " units*\nWater Detection: *" + String(water_meas) + " units*\nExhaust Fan: *" + String(current_pwm_exhaust * 100) + 
+             " %*\nIntake Fan: *" + String(current_pwm_intake * 100) +
+             " %*\nCirculation Fan: *" + String(current_pwm_circ * 100) + " %*\nCycle Duration \\(Day \\| Night \\| Total\\): *" + String(cycle_on) + 
              " \\| " + String(cycle_off) + " \\| " + String(cycle_total) + " hours*\nLight Status: *" + light_status_str + 
              "*\nHumidifier Status: *" + humidifier_status_str + "*";
 }

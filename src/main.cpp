@@ -17,8 +17,8 @@ int long_recon = 0;
 void restoreSettings()
 {
     preferences.begin(SETTINGS_NMSPC, true);
-    target_pwm_intake = preferences.getFloat(SETTINGS_INTAKE);
-    target_pwm_exhaust = preferences.getFloat(SETTINGS_EXHAUST);
+    idle_pwm_intake = preferences.getFloat(SETTINGS_INTAKE);
+    idle_pwm_exhaust = preferences.getFloat(SETTINGS_EXHAUST);
     target_pwm_circ = preferences.getFloat(SETTINGS_CIRC);
     target_humidity = preferences.getFloat(SETTINGS_HUM_T);
     hum_pulse_duration = int(preferences.getFloat(SETTINGS_HUM_C));
