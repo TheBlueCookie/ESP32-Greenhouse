@@ -13,10 +13,10 @@
 TwoWire I2CBME = TwoWire(0);
 Adafruit_BME280 bme;
 
-unsigned int bme280_cycle = 2 * 1000;
+unsigned int bme280_cycle = 5 * 1000;
 unsigned int soil_water_prep = 5 * 1000;
-unsigned int soil_cycle = 1 * 60 * 60 * 1000 + soil_water_prep;
-unsigned int water_cycle = 1 * 60 * 60 * 1000 + soil_water_prep;
+unsigned int soil_cycle = 60 * 15 * 1000 + soil_water_prep;
+unsigned int water_cycle = 60 * 15 * 1000 + soil_water_prep;
 
 unsigned long bme_timestamp = 0;
 unsigned long soil_timestamp = 0;
