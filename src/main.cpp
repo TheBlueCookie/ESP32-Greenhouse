@@ -20,6 +20,7 @@ void restoreSettings()
     idle_pwm_intake = preferences.getFloat(SETTINGS_INTAKE);
     idle_pwm_exhaust = preferences.getFloat(SETTINGS_EXHAUST);
     target_pwm_circ = preferences.getFloat(SETTINGS_CIRC);
+    idle_pwm_circ = target_pwm_circ;
     target_humidity = preferences.getFloat(SETTINGS_HUM_T);
     hum_pulse_duration = int(preferences.getFloat(SETTINGS_HUM_C));
     hum_pulse_duration_millis = hum_pulse_duration * 1000;
