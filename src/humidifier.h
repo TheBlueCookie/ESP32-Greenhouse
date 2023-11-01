@@ -61,8 +61,8 @@ void turnOnHumidifier()
         digitalWrite(RELAY_HUMIDIFIER, 1);
         humidifier_status = true;
         humidifier_status_str = "On";
-        target_pwm_intake = 0.25;
-        target_pwm_exhaust = idle_pwm_exhaust;
+        target_pwm_intake = 0.15;
+        target_pwm_exhaust = 0.15;
         hum_control_active = true;
         Serial.println("Humidfier turned on.");
     }
