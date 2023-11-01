@@ -19,11 +19,25 @@ unsigned long lamp_timestamp;
 unsigned int cycle_on_m;
 unsigned int cycle_off_m;
 
+bool light_one_active;
+bool light_two_active;
+
+void lightOn();
+
 void manualToggle()
 {
     if (light_status == 0)
     {
-        digitalWrite(RELAY_LAMP, HIGH);
+        if (light_one_active)
+        {
+            digitalWrite(RELAY_LAMP, HIGH);
+        }
+
+        if (light_two_active)
+        {
+            digitalWrite(RELAY_LAMP_2, HIGH);
+        }
+
         light_status = 1;
         manual_light_status = 1;
         light_status_str = "On";
@@ -33,7 +47,15 @@ void manualToggle()
 
     else if (light_status == 1)
     {
-        digitalWrite(RELAY_LAMP, LOW);
+        if (light_one_active)
+        {
+            digitalWrite(RELAY_LAMP, LOW);
+        }
+
+        if (light_two_active)
+        {
+            digitalWrite(RELAY_LAMP_2, LOW);
+        }
         light_status = 0;
         manual_light_status = 0;
         light_status_str = "Off";
@@ -42,9 +64,47 @@ void manualToggle()
     }
 }
 
+void setLightOneActive(bool new_status)
+{
+    light_one_active = new_status;
+    saveBoolSetting(light_one_active, SETTINGS_LIGHT_ONE);
+}
+
+void setLightTwoActive(bool new_status)
+{
+    light_two_active = new_status;
+    saveBoolSetting(light_two_active, SETTINGS_LIGHT_TWO);
+}
+
+void toggleLightActive(int light)
+{
+    if (light == 1)
+    {
+        setLightOneActive(!light_one_active);
+    }
+
+    else if (light == 2)
+    {
+        setLightTwoActive(!light_two_active);
+    }
+
+    if (light_status || manual_light_status)
+    {
+        lightOn();
+    }
+}
+
 void lightOn()
 {
-    digitalWrite(RELAY_LAMP, HIGH);
+    if (light_one_active)
+    {
+        digitalWrite(RELAY_LAMP, HIGH);
+    }
+
+    if (light_two_active)
+    {
+        digitalWrite(RELAY_LAMP_2, HIGH);
+    }
     lamp_timestamp = millis();
     next_status = 0;
     light_status = 1;
@@ -55,7 +115,15 @@ void lightOn()
 
 void lightOff()
 {
-    digitalWrite(RELAY_LAMP, LOW);
+    if (light_one_active)
+    {
+        digitalWrite(RELAY_LAMP, LOW);
+    }
+
+    if (light_two_active)
+    {
+        digitalWrite(RELAY_LAMP_2, LOW);
+    }
     lamp_timestamp = millis();
     next_status = 1;
     light_status = 0;
@@ -80,6 +148,7 @@ void updateCycle(float on, float off)
 void setupLight()
 {
     pinMode(RELAY_LAMP, OUTPUT);
+    pinMode(RELAY_LAMP_2, OUTPUT);
     lightOn();
     manual_light_status = 1;
 }

@@ -2,7 +2,7 @@
 
 #define RELAY_LAMP 1
 #define RELAY_HUMIDIFIER 2
-#define RELAY_3 42
+#define RELAY_LAMP_2 42
 
 #define FAN_EXHAUST_PWM 40
 #define FAN_EXHAUST_TACH 41

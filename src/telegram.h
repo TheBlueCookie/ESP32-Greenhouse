@@ -35,6 +35,7 @@ String new_value_text;
 String status;
 String light_presets;
 String environment_menu;
+String lamp_select_menu;
 
 void setupTelegram();
 void updateStatus();
@@ -174,12 +175,12 @@ void changeValue(String msg)
                 break;
 
             case 6: // change target humidity
-                 if (30 <= val && val <= 80)
-                 {
+                if (30 <= val && val <= 80)
+                {
                     changeTargetHumidity(val * 0.01);
                     val_success = true;
-                 }
-                 break;
+                }
+                break;
 
             case 7: // change humidifier pulse duration
                 if (10 <= val && val <= 6000)
@@ -188,7 +189,6 @@ void changeValue(String msg)
                     val_success = true;
                 }
                 break;
-
 
             default:
                 break;
@@ -212,11 +212,10 @@ void changeValue(String msg)
 void updateStatusMsg()
 {
     status = "__Current Status__\nTemperature: *" + String(bme280_meas[0]) + " C*\nHumidity: *" + String(bme280_meas[1]) + " %* \\(Target: " + String(target_humidity * 100) + " %\\)\nSoil moisture: *" +
-             String(soil_meas) + " units*\nWater Detection: *" + String(water_meas) + " units*\nExhaust Fan: *" + String(current_pwm_exhaust * 100) 
-             + " %*\\(Idle: " + String(idle_pwm_exhaust * 100) + "% \\)" +
+             String(soil_meas) + " units*\nWater Detection: *" + String(water_meas) + " units*\nExhaust Fan: *" + String(current_pwm_exhaust * 100) + " %*\\(Idle: " + String(idle_pwm_exhaust * 100) + "% \\)" +
              "\nIntake Fan: *" + String(current_pwm_intake * 100) + " %* \\(Idle: " + String(idle_pwm_intake * 100) + " %\\)" +
-             "\nCirc. Fan: *" + String(current_pwm_circ * 100) + " %* \\(Idle: " + String(idle_pwm_circ * 100) + " %\\)" + "\nCycle Duration \\(Day \\| Night \\| Total\\): *" + String(cycle_on) + 
-             " \\| " + String(cycle_off) + " \\| " + String(cycle_total) + " hours*\nLight Status: *" + light_status_str + 
+             "\nCirc. Fan: *" + String(current_pwm_circ * 100) + " %* \\(Idle: " + String(idle_pwm_circ * 100) + " %\\)" + "\nCycle Duration \\(Day \\| Night \\| Total\\): *" + String(cycle_on) +
+             " \\| " + String(cycle_off) + " \\| " + String(cycle_total) + " hours*\nLight Status: *" + light_status_str +
              "*\nHumidifier Status: *" + humidifier_status_str + "*";
 }
 
@@ -246,9 +245,9 @@ void newMsg(FB_msg &msg)
             if (msg.data == "Fan Settings")
             {
                 depth = 1;
-                bot.editMessage(info_id, "__Current settings__\nExhaust Fan:\t*" + String(current_pwm_exhaust * 100) + " %* \\(Idle: " + String(idle_pwm_exhaust * 100) + " %\\)" + 
-                "\nIntake Fan:\t*" + String(current_pwm_intake * 100) + " %* \\(Idle: " + String(idle_pwm_intake * 100) + "% \\)" +
-                "\nCirc. Fan:\t*" + String(current_pwm_circ * 100) + " %* \\(Idle: " + String(idle_pwm_circ * 100) + " %\\)");
+                bot.editMessage(info_id, "__Current settings__\nExhaust Fan:\t*" + String(current_pwm_exhaust * 100) + " %* \\(Idle: " + String(idle_pwm_exhaust * 100) + " %\\)" +
+                                             "\nIntake Fan:\t*" + String(current_pwm_intake * 100) + " %* \\(Idle: " + String(idle_pwm_intake * 100) + "% \\)" +
+                                             "\nCirc. Fan:\t*" + String(current_pwm_circ * 100) + " %* \\(Idle: " + String(idle_pwm_circ * 100) + " %\\)");
                 bot.editMenu(menu_id, menuText(fan_menu));
             }
 
@@ -309,10 +308,18 @@ void newMsg(FB_msg &msg)
                 bot.editMenu(menu_id, menuText(light_presets));
             }
 
-            else if(msg.data == "Manual Toggle")
+            else if (msg.data == "Manual Toggle")
             {
                 manualToggle();
                 updateStatus();
+            }
+
+            else if (msg.data == "Select Active Lights")
+            {
+                depth = 2;
+                bot.editMenu(menu_id, menuText(lamp_select_menu));
+                bot.editMessage(info_id, "__Current Settings__:\nWhite Light: " +
+                                             String(light_one_active) + "\nRed-Blue Light: " + String(light_two_active));
             }
 
             else if (msg.data == "Humidity")
@@ -362,6 +369,21 @@ void newMsg(FB_msg &msg)
                 updateStatus();
                 goMainMenu();
             }
+
+            else if (msg.data == "Toggle White")
+            {
+                toggleLightActive(1);
+                bot.editMessage(info_id, "__Current Settings__:\nWhite Light: " +
+                                             String(light_one_active) + "\nRed-Blue Light: " + String(light_two_active));
+            }
+
+            else if (msg.data == "Toggle Red-Blue")
+            {
+                toggleLightActive(2);
+                bot.editMessage(info_id, "__Current Settings__:\nWhite Light: " +
+                                             String(light_one_active) + "\nRed-Blue Light: " + String(light_two_active));
+            }
+
             break;
 
         case 99:
@@ -432,11 +454,12 @@ void setupTelegram()
 
     main_menu = "Fan Settings\nLight Settings\nEnvironment Settings";
     fan_menu = "Exhaust\tIntake\tCirculation";
-    light_menu = "Day\tNight\tPresets\nManual Toggle";
+    light_menu = "Day\tNight\tPresets\nSelect Active Lights\nManual Toggle";
     environment_menu = "Humidity\tHum. Cycle\nToggle Block";
     light_presets = "12/12\t16/8\t18/6";
     welcome_text = "Choose an option above or type a command.";
     new_value_text = "Send the new value now \\(cannot be 0\\)";
+    lamp_select_menu = "Toggle White\nToggle Red-Blue";
 
     telegram_restart_timestamp = millis();
 

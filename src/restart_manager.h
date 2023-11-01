@@ -13,3 +13,11 @@ void saveFloatSetting(float val, const char *name)
     preferences.end();
     Serial.println("Saved parameter to drive. " + String(name) + ": " + String(val));
 }
+
+void saveBoolSetting(bool val, const char *name)
+{
+    preferences.begin(SETTINGS_NMSPC, false);
+    preferences.putBool(name, val);
+    preferences.end();
+    Serial.println("Saved parameter to drive. " + String(name) + ": " + String(val));
+}
