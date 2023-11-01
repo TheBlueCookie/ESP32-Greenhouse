@@ -29,6 +29,8 @@ void restoreSettings()
     cycle_total = cycle_on + cycle_off;
     cycle_on_m = cycle_on * 3600 * 1000;
     cycle_off_m = cycle_total * 3600 * 1000 - cycle_on_m;
+    light_one_active = preferences.getBool(SETTINGS_LIGHT_ONE);
+    light_two_active = preferences.getBool(SETTINGS_LIGHT_TWO);
     lightOn();
     preferences.end();
 }
