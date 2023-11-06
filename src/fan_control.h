@@ -25,6 +25,10 @@ float idle_pwm_exhaust_day;
 float idle_pwm_intake_day;
 float idle_pwm_circ_day;
 
+float idle_pwm_exhaust_night;
+float idle_pwm_intake_night;
+float idle_pwm_circ_night;
+
 void setPWMExhaust(float pwm)
 {
     if (0 <= pwm && pwm <= 1)
