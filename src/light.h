@@ -23,6 +23,7 @@ bool light_one_active;
 bool light_two_active;
 
 void lightOn();
+void lightOff();
 
 void manualToggle()
 {
@@ -40,6 +41,7 @@ void manualToggle()
 
         light_status = 1;
         manual_light_status = 1;
+        digitalWrite(FAN_LIGHTS_ONOFF, HIGH);
         light_status_str = "On";
         ThingSpeak.setField(API_LIGHT_FIELD, 1);
         Serial.println("Light On");
@@ -47,15 +49,9 @@ void manualToggle()
 
     else if (light_status == 1)
     {
-        if (light_one_active)
-        {
-            digitalWrite(RELAY_LAMP, LOW);
-        }
-
-        if (light_two_active)
-        {
-            digitalWrite(RELAY_LAMP_2, LOW);
-        }
+        digitalWrite(RELAY_LAMP, LOW);
+        digitalWrite(RELAY_LAMP_2, LOW);
+        digitalWrite(FAN_LIGHTS_ONOFF, LOW);
         light_status = 0;
         manual_light_status = 0;
         light_status_str = "Off";
@@ -68,12 +64,22 @@ void setLightOneActive(bool new_status)
 {
     light_one_active = new_status;
     saveBoolSetting(light_one_active, SETTINGS_LIGHT_ONE);
+
+    if (!new_status)
+    {
+        digitalWrite(RELAY_LAMP, LOW);
+    }
 }
 
 void setLightTwoActive(bool new_status)
 {
     light_two_active = new_status;
     saveBoolSetting(light_two_active, SETTINGS_LIGHT_TWO);
+
+    if (!new_status)
+    {
+        digitalWrite(RELAY_LAMP_2, LOW);
+    }
 }
 
 void toggleLightActive(int light)
@@ -106,6 +112,7 @@ void lightOn()
         digitalWrite(RELAY_LAMP_2, HIGH);
     }
     lamp_timestamp = millis();
+    digitalWrite(FAN_LIGHTS_ONOFF, HIGH);
     next_status = 0;
     light_status = 1;
     light_status_str = "On";
@@ -115,15 +122,9 @@ void lightOn()
 
 void lightOff()
 {
-    if (light_one_active)
-    {
-        digitalWrite(RELAY_LAMP, LOW);
-    }
-
-    if (light_two_active)
-    {
-        digitalWrite(RELAY_LAMP_2, LOW);
-    }
+    digitalWrite(RELAY_LAMP, LOW);
+    digitalWrite(RELAY_LAMP_2, LOW);
+    digitalWrite(FAN_LIGHTS_ONOFF, LOW);
     lamp_timestamp = millis();
     next_status = 1;
     light_status = 0;
@@ -149,6 +150,7 @@ void setupLight()
 {
     pinMode(RELAY_LAMP, OUTPUT);
     pinMode(RELAY_LAMP_2, OUTPUT);
+    pinMode(FAN_LIGHTS_ONOFF, OUTPUT);
     lightOn();
     manual_light_status = 1;
 }
