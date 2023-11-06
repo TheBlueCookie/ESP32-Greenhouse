@@ -10,6 +10,7 @@
 #define FAN_CIRC_TACH 39
 #define FAN_INTAKE_PWM 21
 #define FAN_INTAKE_TACH 33
+#define FAN_LIGHTS_ONOFF 20
 #define FAN_4_PWM 19
 
 #define SEN_BME280_SDA 6
