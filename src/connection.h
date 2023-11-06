@@ -15,7 +15,7 @@ void setupWiFi()
 {
     WiFi.mode(WIFI_STA);
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-    Serial.print("Connecting to WiFi ..");
+    Serial.println("Connecting to WiFi ..");
     while (WiFi.status() != WL_CONNECTED)
     {
         Serial.print('.');
