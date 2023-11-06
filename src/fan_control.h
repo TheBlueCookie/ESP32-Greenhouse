@@ -21,9 +21,9 @@ float target_pwm_exhaust;
 float target_pwm_circ;
 float target_pwm_intake;
 
-float idle_pwm_exhaust;
-float idle_pwm_intake;
-float idle_pwm_circ;
+float idle_pwm_exhaust_day;
+float idle_pwm_intake_day;
+float idle_pwm_circ_day;
 
 void setPWMExhaust(float pwm)
 {
@@ -66,7 +66,7 @@ void setIdlePWMExhaust(float pwm)
     if (0 <= pwm && pwm <= 1)
     {
         int cycle = pwm * 255;
-        idle_pwm_exhaust = pwm;
+        idle_pwm_exhaust_day = pwm;
         saveFloatSetting(pwm, SETTINGS_EXHAUST);
         Serial.println("Changed idle exhaust PWM: " + String(pwm));
     }
@@ -77,7 +77,7 @@ void setIdlePWMCirc(float pwm)
     if (0 <= pwm && pwm <= 1)
     {
         int cycle = pwm * 255;
-        idle_pwm_circ = pwm;
+        idle_pwm_circ_day = pwm;
         saveFloatSetting(pwm, SETTINGS_CIRC);
         Serial.println("Changed idle circulation PWM: " + String(pwm));
     }
@@ -88,7 +88,7 @@ void setIdlePWMIntake(float pwm)
     if (0 <= pwm && pwm <= 1)
     {
         int cycle = pwm * 255;
-        idle_pwm_intake = pwm;
+        idle_pwm_intake_day = pwm;
         saveFloatSetting(pwm, SETTINGS_INTAKE);
         Serial.println("Changed idle intake PWM: " + String(pwm));
     }
@@ -109,7 +109,7 @@ void setupFans()
     current_pwm_exhaust = 0;
     current_pwm_intake = 0;
 
-    target_pwm_exhaust = idle_pwm_exhaust;
-    target_pwm_intake = idle_pwm_intake;
-    target_pwm_circ = idle_pwm_circ;
+    target_pwm_exhaust = idle_pwm_exhaust_day;
+    target_pwm_intake = idle_pwm_intake_day;
+    target_pwm_circ = idle_pwm_circ_day;
 }

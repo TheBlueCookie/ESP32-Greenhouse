@@ -212,9 +212,9 @@ void changeValue(String msg)
 void updateStatusMsg()
 {
     status = "__Current Status__\nTemperature: *" + String(bme280_meas[0]) + " C*\nHumidity: *" + String(bme280_meas[1]) + " %* \\(Target: " + String(target_humidity * 100) + " %\\)\nSoil moisture: *" +
-             String(soil_meas) + " units*\nWater Detection: *" + String(water_meas) + " units*\nExhaust Fan: *" + String(current_pwm_exhaust * 100) + " %*\\(Idle: " + String(idle_pwm_exhaust * 100) + "% \\)" +
-             "\nIntake Fan: *" + String(current_pwm_intake * 100) + " %* \\(Idle: " + String(idle_pwm_intake * 100) + " %\\)" +
-             "\nCirc. Fan: *" + String(current_pwm_circ * 100) + " %* \\(Idle: " + String(idle_pwm_circ * 100) + " %\\)" + "\nCycle Duration \\(Day \\| Night \\| Total\\): *" + String(cycle_on) +
+             String(soil_meas) + " units*\nWater Detection: *" + String(water_meas) + " units*\nExhaust Fan: *" + String(current_pwm_exhaust * 100) + " %*\\(Idle: " + String(idle_pwm_exhaust_day * 100) + "% \\)" +
+             "\nIntake Fan: *" + String(current_pwm_intake * 100) + " %* \\(Idle: " + String(idle_pwm_intake_day * 100) + " %\\)" +
+             "\nCirc. Fan: *" + String(current_pwm_circ * 100) + " %* \\(Idle: " + String(idle_pwm_circ_day * 100) + " %\\)" + "\nCycle Duration \\(Day \\| Night \\| Total\\): *" + String(cycle_on) +
              " \\| " + String(cycle_off) + " \\| " + String(cycle_total) + " hours*\nLight Status: *" + light_status_str +
              "*\nHumidifier Status: *" + humidifier_status_str + "*";
 }
@@ -245,9 +245,9 @@ void newMsg(FB_msg &msg)
             if (msg.data == "Fan Settings")
             {
                 depth = 1;
-                bot.editMessage(info_id, "__Current settings__\nExhaust Fan:\t*" + String(current_pwm_exhaust * 100) + " %* \\(Idle: " + String(idle_pwm_exhaust * 100) + " %\\)" +
-                                             "\nIntake Fan:\t*" + String(current_pwm_intake * 100) + " %* \\(Idle: " + String(idle_pwm_intake * 100) + "% \\)" +
-                                             "\nCirc. Fan:\t*" + String(current_pwm_circ * 100) + " %* \\(Idle: " + String(idle_pwm_circ * 100) + " %\\)");
+                bot.editMessage(info_id, "__Current settings__\nExhaust Fan:\t*" + String(current_pwm_exhaust * 100) + " %* \\(Idle: " + String(idle_pwm_exhaust_day * 100) + " %\\)" +
+                                             "\nIntake Fan:\t*" + String(current_pwm_intake * 100) + " %* \\(Idle: " + String(idle_pwm_intake_day * 100) + "% \\)" +
+                                             "\nCirc. Fan:\t*" + String(current_pwm_circ * 100) + " %* \\(Idle: " + String(idle_pwm_circ_day * 100) + " %\\)");
                 bot.editMenu(menu_id, menuText(fan_menu));
             }
 

@@ -43,8 +43,8 @@ void turnOffHumidifier()
         digitalWrite(RELAY_HUMIDIFIER, 0);
         humidifier_status = false;
         humidifier_status_str = "Off";
-        target_pwm_intake = idle_pwm_intake;
-        target_pwm_exhaust = idle_pwm_exhaust;
+        target_pwm_intake = idle_pwm_intake_day;
+        target_pwm_exhaust = idle_pwm_exhaust_day;
         Serial.println("Humidfier turned off.");
     }
 
@@ -160,8 +160,8 @@ float exhaustPWMHumControl(float hum)
 
         if (offset <= hum_fan_threshold)
         {
-            Serial.println("Calculated exhaust PMW for humidity control: " + String(offset + idle_pwm_exhaust));
-            return float(int((idle_pwm_exhaust + offset) * 100) * 0.01);
+            Serial.println("Calculated exhaust PMW for humidity control: " + String(offset + idle_pwm_exhaust_day));
+            return float(int((idle_pwm_exhaust_day + offset) * 100) * 0.01);
         }
 
         else
@@ -220,8 +220,8 @@ void evaluateHumidifierAction()
 
             else
             {
-                target_pwm_exhaust = idle_pwm_exhaust;
-                target_pwm_intake = idle_pwm_intake;
+                target_pwm_exhaust = idle_pwm_exhaust_day;
+                target_pwm_intake = idle_pwm_intake_day;
                 hum_control_active = false;
                 resetHumHist();
             }
@@ -229,8 +229,8 @@ void evaluateHumidifierAction()
 
         else if (!humidifier_status)
         {
-            target_pwm_exhaust = idle_pwm_exhaust;
-            target_pwm_intake = idle_pwm_intake;
+            target_pwm_exhaust = idle_pwm_exhaust_day;
+            target_pwm_intake = idle_pwm_intake_day;
             try_hum_reduction = true;
             resetHumHist();
         }

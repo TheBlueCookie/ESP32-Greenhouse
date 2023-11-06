@@ -17,10 +17,10 @@ int long_recon = 0;
 void restoreSettings()
 {
     preferences.begin(SETTINGS_NMSPC, true);
-    idle_pwm_intake = preferences.getFloat(SETTINGS_INTAKE);
-    idle_pwm_exhaust = preferences.getFloat(SETTINGS_EXHAUST);
+    idle_pwm_intake_day = preferences.getFloat(SETTINGS_INTAKE);
+    idle_pwm_exhaust_day = preferences.getFloat(SETTINGS_EXHAUST);
     target_pwm_circ = preferences.getFloat(SETTINGS_CIRC);
-    idle_pwm_circ = target_pwm_circ;
+    idle_pwm_circ_day = target_pwm_circ;
     target_humidity = preferences.getFloat(SETTINGS_HUM_T);
     hum_pulse_duration = int(preferences.getFloat(SETTINGS_HUM_C));
     hum_pulse_duration_millis = hum_pulse_duration * 1000;
