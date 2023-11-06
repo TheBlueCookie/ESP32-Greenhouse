@@ -96,7 +96,15 @@ void toggleLightActive(int light)
 
     if (light_status || manual_light_status)
     {
-        lightOn();
+        if (light_one_active)
+        {
+            digitalWrite(RELAY_LAMP, HIGH);
+        }
+
+        if (light_two_active)
+        {
+            digitalWrite(RELAY_LAMP_2, HIGH);
+        }
     }
 }
 
@@ -141,7 +149,6 @@ void updateCycle(float on, float off)
 
     cycle_on_m = cycle_on * 3600 * 1000;
     cycle_off_m = cycle_total * 3600 * 1000 - cycle_on_m;
-    lightOn();
     saveFloatSetting(cycle_on, SETTINGS_DAY);
     saveFloatSetting(cycle_off, SETTINGS_NIGHT);
 }
@@ -152,5 +159,5 @@ void setupLight()
     pinMode(RELAY_LAMP_2, OUTPUT);
     pinMode(FAN_LIGHTS_ONOFF, OUTPUT);
     lightOn();
-    manual_light_status = 1;
+    manual_light_status = 0;
 }
