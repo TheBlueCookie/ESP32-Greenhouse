@@ -46,8 +46,7 @@ void setupSensors()
 
 void measureBME280()
 {
-
-    bme280_meas[0] = bme.readTemperature() - 1.5;
+    bme280_meas[0] = bme.readTemperature() - 0.75;
     bme280_meas[1] = bme.readHumidity();
 
     bme_timestamp = millis();
